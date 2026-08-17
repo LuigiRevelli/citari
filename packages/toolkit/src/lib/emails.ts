@@ -70,7 +70,9 @@ export function situationDuScan(i: ScanInsights): Situation {
 /* ─────────────────────────── briques communes ─────────────────────────── */
 
 const lienRapport = (i: ScanInsights) =>
-  i.reportUrl ? `Votre rapport complet est ici :\n${i.reportUrl}` : "";
+  i.reportUrl
+    ? `${i.mode === "apercu" ? "Votre mesure est ici" : "Votre rapport complet est ici"} :\n${i.reportUrl}`
+    : "";
 
 /** Ce qu'on sait de la personne à qui on écrit. Rien n'est obligatoire. */
 export type Contact = { prenom?: string | null };
@@ -262,7 +264,7 @@ const pied = (avecStop = true) =>
       ? `
 
 --
-Vous recevez cet email parce que vous avez demandé un scan de visibilité IA. Pour ne plus être contacté, répondez « STOP ».`
+Ce message vous est adressé par Citari. Pour ne plus être contacté, répondez « STOP ».`
       : ""
   }`;
 

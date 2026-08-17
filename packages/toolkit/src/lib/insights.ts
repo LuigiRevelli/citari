@@ -41,6 +41,12 @@ export interface ScanInsights {
   sector: string | null;
   score: number;
   scoreLabel: string;
+  /**
+   * Le mode du scan. L'email en a besoin pour ne pas mentir sur ce qu'il
+   * envoie : un aperçu (20 questions, 2 moteurs) n'est pas un rapport complet,
+   * et l'annoncer comme tel se voit à la première ouverture du lien.
+   */
+  mode: string;
   reportUrl: string | null;
   competitors: string[];
   /** Concurrent le plus cité, sa part de voix, et les réponses où il apparaît. */
@@ -403,6 +409,7 @@ export async function buildScanInsights(scanId: string): Promise<ScanInsights> {
     sector: scan.sector,
     score,
     scoreLabel: scoreLabel(score),
+    mode: String((scan as { mode?: string }).mode ?? "apercu"),
     reportUrl: scan.report_token ? `${base}/rapport/${scan.report_token}` : null,
     competitors,
     topCompetitor,
