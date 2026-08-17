@@ -20,6 +20,7 @@ const params = JSON.parse(process.argv[2] ?? "{}") as {
   secteur?: string;
   ville?: string | null;
   mode?: "apercu" | "complet";
+  sansCache?: boolean;
   /** Scan de référence, à re-noter sur les moteurs réellement utilisés ici. */
   referenceScanId?: string;
   parallele: number;
@@ -82,6 +83,7 @@ async function traiterCible(cible: Cible) {
       langue: "fr",
       ipHash: "scan-lot",
       mode: params.mode ?? "apercu",
+      sansCache: params.sansCache ?? false,
     });
     const t = await derouler(scan.id);
     if (!t) return { ...cible, scanId: scan.id, erreur: "scan non terminé" };

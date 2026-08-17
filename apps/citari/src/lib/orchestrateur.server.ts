@@ -212,6 +212,18 @@ export async function creerScan(input: {
   ipHash: string;
   previousScanId?: string | null;
   mode?: ModeScan;
+  /**
+   * Force une mesure neuve, cache ignoré. Réservé à l'outillage interne.
+   *
+   * Le cas qui l'a rendu nécessaire : un lot de trente et un scans a tourné
+   * avec une clé OpenAI dont le projet était archivé. Les mesures étaient
+   * fausses, et le cache de trois jours les resservait à chaque tentative de
+   * réparation — impossible de remesurer avant leur péremption.
+   *
+   * Aucun chemin public ne passe ce drapeau : `lancerScan` ne l'expose pas, et
+   * le garde-fou de coût continue donc de protéger le site.
+   */
+  sansCache?: boolean;
 }) {
   // L'aperçu est le mode par défaut : c'est le seul exposé au public, et un
   // oubli de paramètre côté front doit coûter 0,15 € et non 1,70 €.
@@ -224,7 +236,7 @@ export async function creerScan(input: {
   // (la crédibilité de la mesure), les curieux qui rescannent ne coûtent rien,
   // et l'abus est borné. Un re-scan J+90 (previousScanId) court-circuite
   // le cache : c'est une nouvelle mesure par définition.
-  if (!input.previousScanId) {
+  if (!input.previousScanId && !input.sansCache) {
     const existant = await chercherCache(domaine, mode);
     if (existant) return { id: existant.id, report_token: existant.report_token, cached: true };
   }

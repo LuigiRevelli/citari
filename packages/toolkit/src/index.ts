@@ -172,12 +172,14 @@ program
   .option("-m, --mode <mode>", "apercu (0,14 €) ou complet (1,06 €)", "apercu")
   .option("-p, --parallele <n>", "scans menés de front (max 5)", "3")
   .option("--sans-pipeline", "ne pas créer les prospects dans la base")
+  .option("--sans-cache", "remesurer même si un scan de moins de 3 jours existe (après une panne de clé)")
   .description("Acquisition — scanne une liste d'entreprises et produit le classement du baromètre")
   .action((fichier: string, o: Record<string, string | boolean>) =>
     run(scanLot(fichier, {
       secteur: String(o.secteur),
       ville: o.ville ? String(o.ville) : undefined,
       mode: o.mode === "complet" ? "complet" : "apercu",
+      sansCache: Boolean(o.sansCache),
       parallele: Number(o.parallele) || 3,
       pipeline: !o.sansPipeline,
     })));

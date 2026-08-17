@@ -43,6 +43,7 @@ type Options = {
   /** Nombre de scans menés de front. Au-delà de 3, les API commencent à limiter. */
   parallele?: number;
   pipeline?: boolean;
+  sansCache?: boolean;
 };
 
 export async function scanLot(fichier: string, opts: Options): Promise<void> {
@@ -68,7 +69,7 @@ export async function scanLot(fichier: string, opts: Options): Promise<void> {
   };
 
   const resultats: Resultat[] = await executerPilote(
-    { cibles, secteur: opts.secteur, ville: opts.ville ?? null, mode, parallele },
+    { cibles, secteur: opts.secteur, ville: opts.ville ?? null, mode, parallele, sansCache: opts.sansCache ?? false },
     (r: Resultat) => {
       const etiquette = r.erreur ? `✗ ${r.erreur.slice(0, 40)}` : `${String(r.score).padStart(3)}/100`;
       console.log(`  ${String(++faits).padStart(3)}/${cibles.length}  ${etiquette}  ${r.nom}`);

@@ -21,6 +21,8 @@ export type ParamsPilote =
       ville: string | null;
       mode: "apercu" | "complet";
       parallele: number;
+      /** Ignore le cache de trois jours : remesure après une panne de clé. */
+      sansCache?: boolean;
     }
   | { scanIds: string[]; parallele: number; referenceScanId?: string };
 
