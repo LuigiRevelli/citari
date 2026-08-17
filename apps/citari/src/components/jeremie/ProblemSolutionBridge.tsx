@@ -13,7 +13,7 @@
  */
 import { Quadrillage } from "@/components/jeremie/Quadrillage";
 import { StrokeText } from "@/components/jeremie/StrokeText";
-import { SchemaReponse } from "@/components/jeremie/SchemaReponse";
+import { SchemaTroisPlaces } from "@/components/jeremie/SchemaTroisPlaces";
 
 const LIGNE_1 = "Nous trouvons pourquoi les IA ne vous citent pas.";
 const LIGNE_2 = "Puis nous le réparons.";
@@ -28,8 +28,8 @@ export function ProblemSolutionBridge() {
           <StrokeText text={LIGNE_2} delay={850} duration={1100} align="right" />
         </div>
 
-        <div className="mt-14 sm:mt-20">
-          <SchemaReponse />
+        <div className="mt-16 sm:mt-24">
+          <SchemaTroisPlaces />
         </div>
       </div>
     </section>
