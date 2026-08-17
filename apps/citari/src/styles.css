@@ -1398,3 +1398,19 @@
 details[open] > .carteq-ligne .carteq-chevron {
   transform: rotate(90deg);
 }
+
+/* ---- Démonstrations animées du parcours (DemoEtape) ---- */
+
+/* Le témoin « en cours » en tête de chaque panneau. Respiration lente, pas
+   un clignotement : le panneau doit vivre sans attirer l'œil hors du
+   contenu qu'il démontre. */
+@keyframes demo-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes demo-pulse {
+    0%, 100% { opacity: 1; }
+  }
+}

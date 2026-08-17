@@ -5,6 +5,7 @@ import { useScanFormFocus } from "@/lib/scan-form-focus";
 import { Reveal } from "@/components/jeremie/Reveal";
 import { ScrollFloat } from "@/components/jeremie/ScrollFloat";
 import { Quadrillage } from "@/components/jeremie/Quadrillage";
+import { DemoScan, DemoScanComplet, DemoSprint } from "@/components/jeremie/DemoEtape";
 
 /**
  * Les trois étapes du tunnel, sur fond sombre quadrillé.
@@ -40,10 +41,24 @@ type Etape = {
   offert: boolean;
   duree: string;
   labelObtenu?: string;
-  /** Les points de « ce que vous recevez », en liste plutôt qu'en blocs. */
-  recoit: ReactNode[];
-  /** La phrase qui conclut l'étape, sous la liste. */
-  chute: ReactNode;
+  /**
+   * Trois à quatre étiquettes de six mots — plus des paragraphes.
+   *
+   * Réécrites le 17/08/2026 : un développeur extérieur a lu le site et
+   * renvoyé « réduis la quantité de texte, les gens n'ont pas le temps de
+   * lire, mets davantage de visuel ». Les quatre puces de prose faisaient
+   * 200 mots par carte à côté d'une illustration décorative. La prose
+   * complète n'est pas perdue : elle vit sur les pages liées en pied de
+   * carte (/methode, /scan-complet, /sprint), qui sont aussi les pages que
+   * les moteurs doivent indexer.
+   */
+  preuves: string[];
+  /**
+   * La phrase qui mérite de survivre à la coupe, s'il y en a une. Deux des
+   * trois ont sauté ; celle de l'étape 02 est restée, c'est la seule qui
+   * dise quelque chose qu'aucun visuel ne peut montrer.
+   */
+  chute?: ReactNode;
   /**
    * La notice technique de l'étape, en bouton au pied de la carte
    * (15/08/2026). La section « Vérifiabilité » qui suivait les trois étapes
@@ -54,20 +69,15 @@ type Etape = {
    * déjà payé deux fois).
    */
   doc: { label: string; to: string; hash?: string };
-  image: string;
-  imageWidth: number;
-  imageHeight: number;
-  imageAspect: string;
   /**
-   * Le blanc des BORDS de l'illustration, moyenné au pixel sur la bande
-   * réellement visible (canvas, 15/08/2026). La colonne le reprend, sinon
-   * le crème de l'image contre celui de la carte (#FBFAF7) fait une
-   * frontière que l'œil accroche — Luigi l'a vue du premier coup. Les trois
-   * fichiers n'ont pas le même blanc et leur fond a du grain : d'où une
-   * valeur par étape, et un écart résiduel mesuré à 1,3/255 au pire.
+   * Le panneau animé qui occupe la colonne de gauche.
+   *
+   * Il remplace l'illustration décorative (loupe, guillemet, cadran) qui
+   * tenait 40 % de la carte sans rien démontrer. Ici la colonne MONTRE
+   * l'étape : le scan qui compte des noms, les six moteurs qui s'allument,
+   * les robots qui entrent. Voir DemoEtape.tsx.
    */
-  imageFond: string;
-  alt: string;
+  Demo: () => ReactNode;
 };
 
 const ETAPES: Etape[] = [
@@ -81,51 +91,16 @@ const ETAPES: Etape[] = [
     offert: true,
     duree: "90 secondes",
     labelObtenu: "CE QUE VOUS RECEVEZ",
-    // Réécrites deux fois le 15/08/2026. La première passe listait les
-    // mécanismes ; verdict de Luigi : « ça ne donne pas envie, le scan est
-    // beaucoup plus impressionnant que ça ». Celle-ci raconte ce que le
-    // CLIENT vit — chaque phrase reste couverte par ce que l'orchestrateur
-    // fait réellement.
-    recoit: [
-      <>
-        <strong className="font-semibold text-ink">
-          Vous regardez ChatGPT et Gemini répondre en direct
-        </strong>{" "}
-        aux questions que vos acheteurs posent en ce moment même. 40 réponses réelles, obtenues
-        sous vos yeux par leurs API officielles.
-      </>,
-      <>
-        En 90 secondes, vous savez{" "}
-        <strong className="font-semibold text-ink">qui rafle les recommandations de votre
-        marché</strong> : chaque nom cité est repéré, compté, classé, y compris ceux que vous
-        n'attendiez pas.
-      </>,
-      <>
-        Vous lisez <strong className="font-semibold text-ink">la phrase qu'un acheteur a reçue à
-        votre place</strong>. Le nom que l'IA lui a soufflé, mot pour mot, daté.
-      </>,
-      <>
-        Et pendant ce temps, votre site est testé robot par robot : GPTBot, ClaudeBot,
-        PerplexityBot.{" "}
-        <strong className="font-semibold text-ink">
-          Beaucoup découvrent ici qu'ils leur ferment la porte.
-        </strong>
-      </>,
+    // Le panneau montre les trois : les réponses arrivent, les noms se
+    // comptent, les portes se testent. Les étiquettes ne font que nommer ce
+    // que l'œil vient de voir.
+    preuves: [
+      "40 réponses réelles, sous vos yeux",
+      "Chaque nom cité, compté et classé",
+      "Vos portes testées, robot par robot",
     ],
-    chute: (
-      <>
-        Vous découvrirez peut-être un score que vous n'imaginiez pas.{" "}
-        <strong className="font-semibold text-ink">Dans les deux sens.</strong>
-      </>
-    ),
     doc: { label: "La méthode de mesure, publiée en entier", to: "/methode" },
-    // Dimensions relevées dans le fichier : les trois font 1408×768.
-    image: "/img/etape-scan.png",
-    imageWidth: 1408,
-    imageHeight: 768,
-    imageAspect: "aspect-[2/1]",
-    imageFond: "#FBFAF3",
-    alt: "Une loupe posée sur des lignes de texte, illustration abstraite du scan.",
+    Demo: DemoScan,
   },
   {
     num: "02",
@@ -137,42 +112,17 @@ const ETAPES: Etape[] = [
     offert: true,
     duree: "30 minutes",
     labelObtenu: "CE QUE VOUS RECEVEZ",
-    recoit: [
-      <>
-        La mesure passe à l'échelle réelle :{" "}
-        <strong className="font-semibold text-ink">
-          144 réponses, six moteurs, recherche web activée
-        </strong>
-        . Exactement ce que vivent vos clients quand ils demandent.
-      </>,
-      <>
-        Vous obtenez{" "}
-        <strong className="font-semibold text-ink">
-          les adresses que chaque moteur a ouvertes avant de recommander vos concurrents
-        </strong>
-        . Plus une théorie : la liste des pages qui décident, une par une.
-      </>,
-      <>
-        Vous découvrez{" "}
-        <strong className="font-semibold text-ink">la fiche que chaque IA récite sur vous</strong>,
-        souvent périmée, parfois confondue avec un homonyme. Personne ne vous l'avait jamais
-        montrée.
-      </>,
-      <>
-        Vous repartez avec l'ordre exact des corrections : ce que votre développeur règle en une
-        heure, et ce qui mérite un vrai chantier.
-      </>,
-      <>
-        <strong className="font-semibold text-ink">
-          Votre point de départ est scellé, rejouable à l'identique dans 90 jours
-        </strong>{" "}
-        : le progrès se mesurera, il ne se racontera pas.
-      </>,
+    preuves: [
+      "144 réponses, six moteurs, web activé",
+      "Les adresses qui décident, listées",
+      "La fiche que les IA récitent sur vous",
     ],
     // La phrase la plus forte du site reste ici, où le scepticisme est
     // maximal. Le contrôle du 14/08 l'avait relevée quatre fois à
     // l'identique dans le parcours : c'est désormais son seul emplacement
-    // sur la landing.
+    // sur la landing. Seule des trois chutes à survivre à la coupe du
+    // 17/08/2026 — un visuel peut montrer une mesure, pas un renoncement
+    // commercial.
     chute: (
       <strong className="font-semibold text-ink">
         Nous n'avons rien à vendre à une entreprise déjà bien citée : dans ce cas, on vous le dit et
@@ -183,17 +133,7 @@ const ETAPES: Etape[] = [
     // toutes deux vers /methode, ce que Luigi a relevé — deux étapes, deux
     // documents.
     doc: { label: "Le scan complet, déplié", to: "/scan-complet" },
-    // Canevas élargi à 1900×1036 le 15/08/2026 (script PIL : le grain du
-    // fichier lui-même, tuilé en miroir autour de l'original intact). Le
-    // motif de cette illustration remplissait son cadre bien plus que ceux
-    // des étapes 1 et 3, d'où un « trop zoomé » persistant quel que soit le
-    // recadrage CSS. Le dézoom est désormais DANS le fichier.
-    image: "/img/etape-citations.png",
-    imageWidth: 1900,
-    imageHeight: 1036,
-    imageAspect: "aspect-[2/1]",
-    imageFond: "#FAFAF2",
-    alt: "Un guillemet au-dessus de quatre filets, dont un surligné en rouge.",
+    Demo: DemoScanComplet,
   },
   {
     num: "03",
@@ -204,52 +144,19 @@ const ETAPES: Etape[] = [
     offert: false,
     duree: "30 jours",
     labelObtenu: "CE QUE NOUS FAISONS",
-    // Chaque chantier nomme ses mécanismes réels (robots.txt, llms.txt,
-    // schema.org, IndexNow, logs serveur) : le jargon exact est ici un
-    // argument de vente, et tout existe dans le toolkit.
-    recoit: [
-      <>
-        <strong className="font-semibold text-ink">On ouvre votre site aux IA</strong> :
-        robots.txt, llms.txt, balisage schema.org, fiche Wikidata. Puis on compte les robots
-        entrer dans vos logs. Passer de zéro à des dizaines de visites par semaine, c'est une
-        preuve, pas une impression.
-      </>,
-      <>
-        <strong className="font-semibold text-ink">
-          On écrit les 5 pages qui répondent aux questions où vous perdez
-        </strong>
-        , au format exact que les moteurs citent, et Bing les indexe en heures via IndexNow au
-        lieu d'attendre des semaines.
-      </>,
-      <>
-        <strong className="font-semibold text-ink">
-          On installe votre nom sur les sources qui font gagner vos concurrents
-        </strong>
-        , celles que les moteurs ont réellement consultées pendant votre mesure. À la main,
-        dossier par dossier, relance par relance.
-      </>,
-      <>
-        Puis <strong className="font-semibold text-ink">60 jours de suivi que personne d'autre ne
-        fait</strong> : relances, contrôle à J+45, consolidation. Les agences livrent au jour 30,
-        quand rien n'a encore bougé. L'écart se creuse après.
-      </>,
+    // Le jargon exact (robots.txt, llms.txt, IndexNow) reste un argument de
+    // vente : il est passé DANS le panneau animé, où il se lit d'un coup
+    // d'œil sans coûter un paragraphe. La 4ᵉ étiquette garde les 60 jours de
+    // suivi, seul vrai écart avec une agence.
+    preuves: [
+      "Votre site ouvert aux robots d'IA",
+      "5 pages écrites, indexées en heures",
+      "Votre nom posé sur les bonnes sources",
+      "60 jours de suivi après la livraison",
     ],
-    chute: (
-      <>
-        À J+90, le même relevé qu'aujourd'hui, mot pour mot.{" "}
-        <strong className="font-semibold text-ink">
-          C'est la seule chose que nous garantissons, et la seule qui se vérifie.
-        </strong>
-      </>
-    ),
     doc: { label: "Le programme des 90 jours, étape par étape", to: "/sprint" },
     labelCout: "CE QUE ÇA VOUS DEMANDE",
-    image: "/img/etape-diagnostic.png",
-    imageWidth: 1408,
-    imageHeight: 768,
-    imageAspect: "aspect-[2/1]",
-    imageFond: "#FAFAF3",
-    alt: "Un cadran de mesure avec une aiguille rouge, illustration du sprint de trente jours.",
+    Demo: DemoSprint,
   },
 ];
 
@@ -313,29 +220,15 @@ export function SectionProcedure() {
               <Reveal delay={i * 120} className="block">
                 <div>
                   <div className="card-lift group grid gap-0 overflow-hidden border border-rule bg-paper shadow-[0_32px_70px_-36px_rgba(251,250,247,0.18)] hover:border-signal sm:grid-cols-[2fr_3fr]">
-                    {/* La bordure et le fond vivent sur le CONTENEUR, pas sur
-                        l'image : celle-ci est plafonnée en hauteur, et sans
-                        conteneur le filet vertical s'arrêtait avec elle.
-
-                        Pourquoi un plafond : les trois cartes n'ont pas la
-                        même quantité de texte, donc pas la même hauteur (507,
-                        664 et 524px). En `object-cover` pleine hauteur, la
-                        carte 02 ne montrait que 31 % de son illustration
-                        contre 41 % pour les autres — d'où le « trop zoomé »
-                        de Luigi (15/08/2026). Un cadre commun rend le
-                        recadrage identique partout. */}
-                    <div
-                      style={{ backgroundColor: etape.imageFond }}
-                      className="flex items-center border-b border-rule sm:border-b-0 sm:border-r"
-                    >
-                      <img
-                        src={etape.image}
-                        alt={etape.alt}
-                        loading="lazy"
-                        width={etape.imageWidth}
-                        height={etape.imageHeight}
-                        className={`${etape.imageAspect} w-full object-cover sm:aspect-auto sm:h-full sm:max-h-[510px]`}
-                      />
+                    {/* La colonne de démonstration. L'ancienne illustration
+                        (un PNG décoratif recadré en object-cover, plafonné à
+                        510px) posait un problème de recadrage réglé trois
+                        fois ; le panneau animé n'a plus ce souci puisqu'il se
+                        met à la hauteur de la carte. Le fond reprend
+                        --paper-2, donc plus de blancs de bords à accorder au
+                        pixel près comme le 15/08. */}
+                    <div className="flex min-h-[330px] items-stretch border-b border-rule sm:min-h-0 sm:border-b-0 sm:border-r">
+                      <etape.Demo />
                     </div>
 
                     <div className="flex flex-col p-6 sm:p-7">
@@ -377,22 +270,27 @@ export function SectionProcedure() {
                         <p className="mono text-[11px] uppercase tracking-[0.12em] text-ink-2">
                           {etape.labelObtenu ?? "vous obtenez"}
                         </p>
-                        <ul className="mt-2.5 flex flex-col gap-2">
-                          {etape.recoit.map((point, k) => (
-                            <li key={k} className="flex items-start gap-2.5">
-                              <span
-                                aria-hidden
-                                className="mono mt-[3px] flex-none text-[11px] text-signal"
-                              >
+                        {/* Des étiquettes, plus des paragraphes : une ligne
+                            chacune, aucune ne doit passer à la ligne sur
+                            desktop. Le corps remonte à 15,5px parce qu'il n'y
+                            a plus de pavé à compacter. */}
+                        <ul className="mt-3 flex flex-col gap-2.5">
+                          {etape.preuves.map((point, k) => (
+                            <li key={k} className="flex items-baseline gap-2.5">
+                              <span aria-hidden className="mono flex-none text-[11px] text-signal">
                                 →
                               </span>
-                              <span className="flex-1 text-[14.5px] leading-[1.45] text-ink-2">
+                              <span className="flex-1 text-[15.5px] leading-[1.3] text-ink">
                                 {point}
                               </span>
                             </li>
                           ))}
                         </ul>
-                        <p className="mt-3 text-[14.5px] leading-[1.45] text-ink-2">{etape.chute}</p>
+                        {etape.chute ? (
+                          <p className="mt-4 border-t border-rule pt-3 text-[14px] leading-[1.45] text-ink-2">
+                            {etape.chute}
+                          </p>
+                        ) : null}
                       </div>
 
                       <dl className="mono mt-5 border-l-2 border-rule pl-4 text-[13.5px] tabular-nums sm:mt-auto sm:pt-5">
