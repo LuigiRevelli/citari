@@ -8,7 +8,7 @@ pourquoi, voir [POSITIONNEMENT.md](POSITIONNEMENT.md).
 ## 1. Le coup que nous seuls pouvons jouer
 
 Tout le monde peut envoyer un mail de prospection. **Nous pouvons scanner un
-prospect avant de le contacter**, pour cinquante centimes.
+prospect avant de le contacter**, pour quatorze centimes.
 
 Cela change la nature de l'échange. Ce n'est plus un démarchage, c'est un
 diagnostic offert et vérifiable. Le prospect n'a rien demandé mais il reçoit
@@ -25,7 +25,8 @@ seule.
 1. **Constituer une liste** de 30 à 50 entreprises d'un même secteur et d'une
    même zone. Sources : Pappers pour les données légales françaises, Apollo
    pour les contacts, annuaires sectoriels.
-2. **Scanner le lot** et classer du pire au meilleur score.
+2. **Scanner le lot en mode aperçu** (`scan-lot --mode apercu`, 0,14 € par
+   entreprise) et classer du pire au meilleur score.
 3. **Contacter les vingt plus mauvais**, en commençant par ceux dont le panier
    moyen dépasse 2 900 €.
 4. **L'exclusivité ne s'engage qu'à la signature.** Prospecter plusieurs
@@ -47,17 +48,18 @@ mail commercial est une faute qui ne se rattrape pas.
 >
 > Bonjour {prénom},
 >
-> J'ai mesuré la visibilité de {marque} dans ChatGPT, Claude, Gemini,
-> Perplexity, Grok et Le Chat.
+> J'ai mesuré la visibilité de {marque} dans ChatGPT et Gemini.
 >
-> Sur 24 questions que posent vos clients avant de choisir un
+> Sur 20 questions que posent vos clients avant de choisir un
 > {métier}, {marque} est citée {N} fois. {concurrent} l'est {M} fois.
 >
-> Voici le rapport complet, gratuitement et sans contrepartie :
+> Voici la mesure, gratuitement et sans contrepartie :
 > {lien}
 >
-> Si le sujet vous intéresse, je vous propose trente minutes pour le
-> commenter. Si ce n'est pas le moment, ce message restera sans suite.
+> Si le sujet vous intéresse, je vous propose trente minutes pour la
+> commenter, et j'y ajoute les quatre moteurs restants — Claude,
+> Perplexity, Grok et Le Chat. Si ce n'est pas le moment, ce message
+> restera sans suite.
 >
 > {signature}
 
@@ -67,6 +69,30 @@ valeur avant toute demande, et une porte de sortie explicite.
 
 **Ce qui le tuerait :** un superlatif, une urgence fabriquée, une relance
 automatique agressive, ou un chiffre approximatif.
+
+### Pourquoi l'aperçu, et pas le scan complet
+
+*Tranché le 17/08/2026 par Jérémy.* Le mail de prospection envoie désormais un
+scan **aperçu** : 20 questions, deux moteurs, 0,14 € au lieu de 1,06 €.
+
+Trois raisons, dans cet ordre :
+
+1. **Le prospect voit la page publique**, celle du site, et non le document de
+   mesure. C'est la même chose qu'il aurait obtenue en saisissant son adresse
+   lui-même, donc le mail ne court-circuite pas le tunnel.
+2. **Les quatre moteurs non interrogés s'affichent verrouillés.** Le manque
+   devient l'objet du rendez-vous, au lieu que tout soit donné à froid.
+3. **Sept fois moins cher**, ce qui autorise des lots plus larges à budget égal.
+
+**La règle qui en découle, et elle ne se négocie pas : le mail ne nomme que les
+moteurs qui ont réellement répondu.** En aperçu, c'est ChatGPT et Gemini, jamais
+les six. Un prospect qui ouvre son rapport et n'y trouve pas Perplexity a
+attrapé le message en flagrant délit dès la première ligne, et le reste de la
+mesure devient suspect avec lui.
+
+Le corollaire opérationnel : quand un moteur tombe en panne pendant un lot — clé
+révoquée, projet archivé, plafond de débit — le mail doit cesser de le nommer
+avant de partir. Vérifier les erreurs du lot AVANT de rédiger, jamais après.
 
 ### La séquence de relance
 
@@ -183,6 +209,11 @@ adapter le mot d'introduction.
 
 - Inventer un chiffre, un délai ou une référence.
 - Générer librement le texte d'un mail de prospection avec un modèle.
+- **Nommer dans un mail un moteur qui n'a pas répondu.** Le nombre de moteurs et
+  le nombre de questions se lisent sur le lot réellement mesuré, jamais sur le
+  gabarit.
+- Envoyer un lot sans avoir regardé ses erreurs. Un moteur muet à 100 % ne se
+  voit pas dans un score, il se voit dans les erreurs.
 - Promettre une position ou un score.
 - Baisser le prix pour conclure.
 - Vendre un sprint à quelqu'un dont le score est déjà bon. On le lui dit et on
