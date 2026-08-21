@@ -39,6 +39,17 @@ type Etape = {
    */
   prix: string;
   offert: boolean;
+  /**
+   * Marque l'étape qui se paie une seule fois. Le repère « sans abonnement »
+   * s'affiche alors contre le prix : c'est notre écart le plus net avec une
+   * offre par abonnement, et il se perdait en bas de carte.
+   *
+   * Formulé sur NOTRE modèle, jamais sur celui des autres : écrire « à la
+   * différence de nos concurrents » serait une affirmation sur des tiers que
+   * nous ne pouvons pas prouver, et le site n'avance rien qu'il ne puisse
+   * tenir.
+   */
+  paiementUnique?: boolean;
   duree: string;
   labelObtenu?: string;
   /**
@@ -142,6 +153,7 @@ const ETAPES: Etape[] = [
     cout: "2 900 € HT, une fois. 50 % à la commande, 50 % à la livraison. Aucun abonnement, aucune reconduction.",
     prix: "2 900 € HT",
     offert: false,
+    paiementUnique: true,
     duree: "30 jours",
     labelObtenu: "CE QUE NOUS FAISONS",
     // Le jargon exact (robots.txt, llms.txt, IndexNow) reste un argument de
@@ -259,6 +271,17 @@ export function SectionProcedure() {
                           <span className="mono text-[12px] tabular-nums text-ink-2">
                             {etape.duree}
                           </span>
+                          {/* Le paiement unique, affiché À CÔTÉ DU PRIX
+                              (17/08/2026). Il ne vivait que dans la ligne de
+                              coût, en bas de carte et en petit : c'est
+                              pourtant la différence la plus nette avec les
+                              offres par abonnement, et elle doit se lire dans
+                              la même seconde que le montant. */}
+                          {etape.paiementUnique ? (
+                            <span className="mono mt-1 border border-signal px-1.5 py-0.5 text-[9.5px] uppercase tracking-[0.1em] text-signal">
+                              sans abonnement
+                            </span>
+                          ) : null}
                         </div>
                       </div>
 
