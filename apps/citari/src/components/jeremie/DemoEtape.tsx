@@ -24,6 +24,8 @@
  */
 import { useEffect, useRef, useState } from "react";
 
+import { MOTEURS, MOTEURS_APERCU } from "@/lib/typo";
+import { MoteurLogo } from "@/components/moteur-logo";
 import { useDemoActive } from "@/lib/use-demo-active";
 
 /** Compte de 0 à `cible` quand `actif` passe à vrai. Repart de 0 sinon. */
@@ -216,14 +218,19 @@ export function DemoScan() {
           </p>
         </div>
 
-        {/* Les deux moteurs interrogés */}
-        <Ligne actif={actif} retard={900} className="mt-3 flex items-center gap-2">
-          {["ChatGPT", "Gemini"].map((m) => (
+        {/* Les deux moteurs du scan gratuit, en logos plutôt qu'en noms
+            (17/08/2026). Ils viennent de MOTEURS_APERCU : la liste des deux
+            moteurs réellement interrogés par le scan offert est figée dans
+            lib/typo.ts, et c'est elle qui fait foi. */}
+        <Ligne actif={actif} retard={900} className="mt-3 flex items-center gap-3">
+          {MOTEURS_APERCU.map((m) => (
             <span
               key={m}
-              className="mono border border-rule bg-paper px-2 py-1 text-[10px] uppercase tracking-[0.1em] text-ink-2"
+              title={m}
+              className="flex items-center justify-center border border-rule bg-paper px-2.5 py-1.5 text-[15px] text-ink"
             >
-              {m}
+              <MoteurLogo moteur={m} />
+              <span className="sr-only">{m}</span>
             </span>
           ))}
           <span className="mono ml-auto text-[10px] tabular-nums text-ink-2">40 réponses</span>
@@ -272,7 +279,11 @@ export function DemoScan() {
 /* 02 — LE SCAN COMPLET                                                */
 /* ------------------------------------------------------------------ */
 
-const MOTEURS = ["ChatGPT", "Gemini", "Claude", "Perplexity", "Copilot", "Mistral"];
+/* Les six moteurs viennent désormais de lib/typo.ts (import en tête).
+   Cette liste locale annonçait Copilot et Mistral, que Citari n'interroge
+   pas, et taisait Grok et Le Chat, qui le sont : exactement la divergence
+   contre laquelle LogosMoteurs.tsx met en garde — « afficher un moteur
+   qu'on n'interroge pas, ou en cacher un qu'on facture ». (17/08/2026) */
 
 const SOURCES = [
   { url: "annuaire-experts-comptables.fr", cite: true },
@@ -318,7 +329,8 @@ export function DemoScanComplet() {
             {MOTEURS.map((m, i) => (
               <span
                 key={m}
-                className="mono border px-1.5 py-1 text-center text-[9.5px] uppercase tracking-[0.06em] transition-all duration-400 ease-out"
+                title={m}
+                className="flex items-center justify-center border py-1.5 text-[16px] transition-all duration-400 ease-out"
                 style={{
                   opacity: actif ? 1 : 0.25,
                   borderColor: actif ? "var(--ink)" : "var(--rule)",
@@ -326,7 +338,8 @@ export function DemoScanComplet() {
                   transitionDelay: `${600 + i * 110}ms`,
                 }}
               >
-                {m}
+                <MoteurLogo moteur={m} />
+                <span className="sr-only">{m}</span>
               </span>
             ))}
           </div>

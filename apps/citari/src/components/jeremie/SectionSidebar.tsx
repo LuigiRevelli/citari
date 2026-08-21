@@ -23,19 +23,24 @@ type Section = {
 };
 
 /**
- * « Méthode » désignait la section des trois étapes, qui décrit le parcours
- * commercial. La page /methode — formule, barème, calcul complet, limites
- * assumées — n'était atteignable que par le pied de page, et personne ne la
- * trouvait (15/08/2026). Le repère « Méthode » lui revient, les trois étapes
- * deviennent « Parcours ».
+ * Seulement les sections de la page, depuis le 17/08/2026.
+ *
+ * « Méthode » et « Sprint » y figuraient aussi, en repères PLEINS pour dire
+ * qu'ils menaient ailleurs (ajoutés le 15/08 parce que personne ne trouvait
+ * la page /methode). Jérémie a demandé le retrait de ces deux points gris :
+ * deux ronds au milieu de traits accrochaient l'œil sans qu'on comprenne
+ * pourquoi.
+ *
+ * Les deux pages restent atteignables par le pied de page et par le bouton
+ * au pied de leur carte du parcours — c'est le repère qui disparaît, pas le
+ * chemin. Le rendu `section.to` est conservé plus bas : il ne coûte rien et
+ * servira si un jour un lien externe revient dans cette barre.
  */
 const SECTIONS: Section[] = [
   { id: "scan", label: "Scan" },
   { id: "probleme", label: "Problème" },
   { id: "cout", label: "Coût" },
   { id: "parcours", label: "Parcours" },
-  { id: "methode-page", label: "Méthode", to: "/methode" },
-  { id: "sprint-page", label: "Sprint", to: "/sprint" },
   { id: "faq", label: "FAQ" },
   { id: "contact", label: "Contact" },
 ];
