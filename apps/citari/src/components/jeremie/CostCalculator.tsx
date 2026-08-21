@@ -127,7 +127,9 @@ function Jauge({ pct, couleur, wide }: { pct: number; couleur: string; wide: boo
 
   return (
     <div ref={ref} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <div style={{ position: "relative", height: wide ? 12 : 10, background: TRACK, borderRadius: 2 }}>
+      <div
+        style={{ position: "relative", height: wide ? 12 : 10, background: TRACK, borderRadius: 2 }}
+      >
         <div
           style={{
             position: "absolute",
@@ -154,7 +156,15 @@ function Jauge({ pct, couleur, wide }: { pct: number; couleur: string; wide: boo
           }}
         />
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", fontFamily: MONO, fontSize: 10, color: FAINT }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          fontFamily: MONO,
+          fontSize: 10,
+          color: FAINT,
+        }}
+      >
         <span>0</span>
         <span>la moitié</span>
         <span>100 %</span>
@@ -232,14 +242,28 @@ function StatCard({
             fontVariantNumeric: "tabular-nums",
           }}
         />
-        <span style={{ fontSize: wide ? 30 : 25, fontWeight: 800, letterSpacing: "-0.03em", color: couleur }}>
+        <span
+          style={{
+            fontSize: wide ? 30 : 25,
+            fontWeight: 800,
+            letterSpacing: "-0.03em",
+            color: couleur,
+          }}
+        >
           {unit}
         </span>
       </div>
 
       <Jauge pct={Number(value.replace(",", "."))} couleur={couleur} wide={wide} />
 
-      <span style={{ fontSize: wide ? 15.5 : 14.5, lineHeight: 1.45, color: BODY_STRONG, textWrap: "pretty" as never }}>
+      <span
+        style={{
+          fontSize: wide ? 15.5 : 14.5,
+          lineHeight: 1.45,
+          color: BODY_STRONG,
+          textWrap: "pretty" as never,
+        }}
+      >
         {implication}
       </span>
 
@@ -259,7 +283,14 @@ function StatCard({
           <img
             src={logo}
             alt={logoAlt}
-            style={{ height: 22, width: "auto", maxWidth: 104, objectFit: "contain", display: "block", flexShrink: 0 }}
+            style={{
+              height: 22,
+              width: "auto",
+              maxWidth: 104,
+              objectFit: "contain",
+              display: "block",
+              flexShrink: 0,
+            }}
           />
         ) : null}
       </div>
@@ -304,10 +335,7 @@ function Clients({
       {Array.from({ length: total }, (_, i) => (
         <svg key={i} width="17" height="21" viewBox="0 0 17 21" fill="none">
           <circle cx="8.5" cy="5.5" r="4.5" fill={i < touches ? RED : "#3A3833"} />
-          <path
-            d="M0.5 20.5c0-4.4 3.6-8 8-8s8 3.6 8 8"
-            fill={i < touches ? RED : "#3A3833"}
-          />
+          <path d="M0.5 20.5c0-4.4 3.6-8 8-8s8 3.6 8 8" fill={i < touches ? RED : "#3A3833"} />
         </svg>
       ))}
     </div>
@@ -373,7 +401,9 @@ function Slider({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+      <div
+        style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}
+      >
         <span style={{ fontSize: 16, color: BODY_STRONG }}>{label}</span>
         <span
           style={{
@@ -413,8 +443,26 @@ function Slider({
           outline: "none",
         }}
       >
-        <div style={{ position: "absolute", left: 0, right: 0, height: 6, background: TRACK, borderRadius: 99 }} />
-        <div style={{ position: "absolute", left: 0, width: `${pct}%`, height: 6, background: INK, borderRadius: 99 }} />
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            height: 6,
+            background: TRACK,
+            borderRadius: 99,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            width: `${pct}%`,
+            height: 6,
+            background: INK,
+            borderRadius: 99,
+          }}
+        />
         <div
           style={{
             position: "absolute",
@@ -520,7 +568,14 @@ export function CostCalculator({ sprintPrice = 2900 }: { sprintPrice?: number } 
       >
         {/* les deux chiffres publics */}
         <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 32 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              gap: 32,
+            }}
+          >
             <div
               style={{
                 display: "flex",
@@ -627,8 +682,18 @@ export function CostCalculator({ sprintPrice = 2900 }: { sprintPrice?: number } 
           </div>
         </div>
 
-        {/* le simulateur, compacté sur un rang */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        {/* le simulateur, compacté sur un rang.
+
+            `id` posé le 17/08/2026 : le repère « Coût » de la barre latérale
+            visait le HAUT de la section, donc il déposait le visiteur devant
+            les deux statistiques Arcom et McKinsey. Ce qu'on veut lui
+            montrer, c'est le calculateur — la seule chose de la page qui
+            parle de SON chiffre d'affaires. */}
+        <div
+          id="calculateur"
+          className="scroll-mt-24"
+          style={{ display: "flex", flexDirection: "column", gap: 18 }}
+        >
           <div
             style={{
               display: "flex",
@@ -652,8 +717,17 @@ export function CostCalculator({ sprintPrice = 2900 }: { sprintPrice?: number } 
             >
               Combien de vos clients passent par une IA avant de vous appeler ?
             </h3>
-            <p style={{ margin: 0, fontSize: 15.5, lineHeight: 1.5, color: BODY, textWrap: "pretty" as never }}>
-              Ça ne laisse aucune trace dans vos statistiques, mais vous pouvez l'estimer ci-dessous.
+            <p
+              style={{
+                margin: 0,
+                fontSize: 15.5,
+                lineHeight: 1.5,
+                color: BODY,
+                textWrap: "pretty" as never,
+              }}
+            >
+              Ça ne laisse aucune trace dans vos statistiques, mais vous pouvez l'estimer
+              ci-dessous.
             </p>
           </div>
 
@@ -711,7 +785,15 @@ export function CostCalculator({ sprintPrice = 2900 }: { sprintPrice?: number } 
                 onChange={setClients}
               />
 
-              <span style={{ fontFamily: MONO, fontSize: 11, lineHeight: 1.45, color: MUTED, marginTop: "auto" }}>
+              <span
+                style={{
+                  fontFamily: MONO,
+                  fontSize: 11,
+                  lineHeight: 1.45,
+                  color: MUTED,
+                  marginTop: "auto",
+                }}
+              >
                 Base : {PART_IA} % des acheteurs interrogent une IA avant de décider, repère
                 McKinsey 2026.
               </span>
@@ -728,7 +810,14 @@ export function CostCalculator({ sprintPrice = 2900 }: { sprintPrice?: number } 
                 gap: 13,
               }}
             >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 12,
+                }}
+              >
                 <span
                   style={{
                     fontFamily: MONO,
@@ -740,7 +829,9 @@ export function CostCalculator({ sprintPrice = 2900 }: { sprintPrice?: number } 
                 >
                   Ce que vous ne voyez pas
                 </span>
-                <div style={{ display: "flex", background: "#26241F", borderRadius: 99, padding: 2 }}>
+                <div
+                  style={{ display: "flex", background: "#26241F", borderRadius: 99, padding: 2 }}
+                >
                   <button type="button" onClick={() => setPeriod("month")} style={segment(!isYear)}>
                     mois
                   </button>
@@ -757,7 +848,14 @@ export function CostCalculator({ sprintPrice = 2900 }: { sprintPrice?: number } 
                   immédiat. Le montant vient ensuite, comme conséquence. */}
               <Clients total={clients} touches={clientsIA} compte={compte} part={PART_IA} />
 
-              <span style={{ fontSize: wide ? 17 : 16, fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.3 }}>
+              <span
+                style={{
+                  fontSize: wide ? 17 : 16,
+                  fontWeight: 600,
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.3,
+                }}
+              >
                 {compte ? (
                   <>
                     Environ {fmt(clientsIA)} de vos {fmt(clients)} nouveaux clients par mois{" "}
@@ -786,12 +884,22 @@ export function CostCalculator({ sprintPrice = 2900 }: { sprintPrice?: number } 
                   >
                     {fmt(result)}
                   </span>
-                  <span style={{ fontFamily: MONO, fontSize: 22, fontWeight: 600, color: RED }}>€</span>
+                  <span style={{ fontFamily: MONO, fontSize: 22, fontWeight: 600, color: RED }}>
+                    €
+                  </span>
                   <span style={{ fontFamily: MONO, fontSize: 12, color: ON_INK_MUTED }}>
                     / {isYear ? "an" : "mois"}
                   </span>
                 </div>
-                <span style={{ display: "block", marginTop: 6, fontSize: 15, lineHeight: 1.4, color: ON_INK_BODY }}>
+                <span
+                  style={{
+                    display: "block",
+                    marginTop: 6,
+                    fontSize: 15,
+                    lineHeight: 1.4,
+                    color: ON_INK_BODY,
+                  }}
+                >
                   d'affaires qui se jouent dans une réponse que vous n'avez jamais lue.
                 </span>
               </div>
