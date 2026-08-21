@@ -672,8 +672,10 @@ export function CostCalculator({ sprintPrice = 2900 }: { sprintPrice?: number } 
                 couleur={RED}
                 implication={
                   <>
-                    Près de <strong style={{ fontWeight: 700 }}>quatre acheteurs sur dix</strong>{" "}
-                    arrivent avec une liste déjà faite. Vous y êtes, ou vous n'existez pas.
+                    Ils comparent avant de vous contacter.{" "}
+                    <strong style={{ fontWeight: 700 }}>
+                      Si la réponse ne vous cite pas, il n'y a pas de contact.
+                    </strong>
                   </>
                 }
                 source="McKinsey · mars 2026"
