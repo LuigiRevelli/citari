@@ -20,6 +20,15 @@ type Section = {
   label: string;
   /** Destination hors landing : la barre ouvre la page au lieu de défiler. */
   to?: string;
+  /**
+   * Où DÉPOSER le visiteur, si ce n'est pas le haut de la section.
+   *
+   * `id` sert à savoir quelle section est active pendant le défilement ; il
+   * doit donc rester celui de la section entière. Ces deux rôles se
+   * confondaient, et « Coût » amenait au début de sa section — devant deux
+   * statistiques — au lieu du calculateur.
+   */
+  cible?: string;
 };
 
 /**
@@ -39,7 +48,7 @@ type Section = {
 const SECTIONS: Section[] = [
   { id: "scan", label: "Scan" },
   { id: "probleme", label: "Problème" },
-  { id: "cout", label: "Coût" },
+  { id: "cout", label: "Coût", cible: "calculateur" },
   { id: "parcours", label: "Parcours" },
   { id: "faq", label: "FAQ" },
   { id: "contact", label: "Contact" },
@@ -169,7 +178,7 @@ export function SectionSidebar() {
             <button
               key={section.id}
               type="button"
-              onClick={() => scrollTo(section.id)}
+              onClick={() => scrollTo(section.cible ?? section.id)}
               aria-label={`Aller à ${section.label}`}
               className={classe}
             >
