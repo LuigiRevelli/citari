@@ -145,7 +145,24 @@ function Ligne({
 /* 01 — LE SCAN                                                        */
 /* ------------------------------------------------------------------ */
 
-const QUESTION = "meilleur cabinet comptable à Lyon";
+/**
+ * Les questions défilent, secteur après secteur (17/08/2026).
+ *
+ * Une seule question en dur — « meilleur cabinet comptable à Lyon » — faisait
+ * conclure à un plombier ou à un avocat que le produit ne le concernait pas.
+ * Elles tournent donc toutes les deux secondes environ.
+ *
+ * Longueurs tenues entre 28 et 35 signes, volontairement : la carte vit dans
+ * une pile, et une question nettement plus longue relancerait la mise en page
+ * de toute la section à chaque rotation.
+ */
+const QUESTIONS = [
+  "meilleur cabinet comptable à Lyon",
+  "meilleur plombier à Bordeaux",
+  "quelle agence web pour mon site",
+  "avocat en droit du travail à Nantes",
+  "meilleur traiteur pour un mariage",
+];
 
 const CITES = [
   { nom: "Concurrent A", total: 19, vous: false },
@@ -158,33 +175,52 @@ export function DemoScan() {
   const actif = useDemoActive(ref);
 
   // La question s'écrit caractère par caractère : c'est ce qui dit « en
-  // direct » sans avoir à écrire le mot.
+  // direct » sans avoir à écrire le mot. Puis elle cède la place à celle
+  // d'un autre métier.
+  const [iQuestion, setIQuestion] = useState(0);
   const [tapes, setTapes] = useState(0);
+  const question = QUESTIONS[iQuestion]!;
+
   useEffect(() => {
     if (!actif) {
+      setIQuestion(0);
       setTapes(0);
       return;
     }
+
+    const dureeFrappe = question.length * 34;
+
+    // Mouvement réduit : les questions tournent quand même — c'est le sens du
+    // visuel, pas une fioriture — mais elles s'affichent d'un coup.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setTapes(QUESTION.length);
-      return;
+      setTapes(question.length);
+      const suite = window.setTimeout(() => setIQuestion((v) => (v + 1) % QUESTIONS.length), 2600);
+      return () => clearTimeout(suite);
     }
+
+    setTapes(0);
     let i = 0;
-    const t = window.setInterval(() => {
+    const frappe = window.setInterval(() => {
       i += 1;
       setTapes(i);
-      if (i >= QUESTION.length) clearInterval(t);
+      if (i >= question.length) clearInterval(frappe);
     }, 34);
+
     // Même filet que les compteurs : en arrière-plan, setInterval est bridé à
     // une seconde et la question resterait coupée en plein milieu (« meilleur
-    // c ») pour qui revient sur l'onglet. Passé le temps de frappe normal, on
-    // affiche la phrase entière.
-    const rattrape = window.setTimeout(() => setTapes(QUESTION.length), QUESTION.length * 34 + 500);
+    // c ») pour qui revient sur l'onglet.
+    const rattrape = window.setTimeout(() => setTapes(question.length), dureeFrappe + 600);
+    const suite = window.setTimeout(
+      () => setIQuestion((v) => (v + 1) % QUESTIONS.length),
+      dureeFrappe + 2000,
+    );
+
     return () => {
-      clearInterval(t);
+      clearInterval(frappe);
       clearTimeout(rattrape);
+      clearTimeout(suite);
     };
-  }, [actif]);
+  }, [actif, question]);
 
   const a = useCompteur(19, actif, 1000, 1300);
   const b = useCompteur(12, actif, 1000, 1450);
@@ -203,18 +239,21 @@ export function DemoScan() {
           <p className="mono text-[9.5px] uppercase tracking-[0.12em] text-ink-2">
             question d'acheteur
           </p>
-          <p className="mono mt-1 text-[12px] leading-snug text-ink">
-            « {QUESTION.slice(0, tapes)}
+          {/* min-h : la hauteur est réservée pour deux lignes. Sans elle, une
+              question plus courte que la précédente ferait respirer toute la
+              pile de cartes à chaque rotation. */}
+          <p className="mono mt-1 min-h-[2.6em] text-[12px] leading-snug text-ink" aria-live="off">
+            « {question.slice(0, tapes)}
             <span
               aria-hidden
               className="ml-px inline-block w-[6px] bg-signal align-middle"
               style={{
                 height: "1em",
-                opacity: tapes < QUESTION.length ? 1 : 0,
+                opacity: tapes < question.length ? 1 : 0,
                 animation: "citari-blink 0.9s steps(1) infinite",
               }}
             />
-            {tapes >= QUESTION.length ? " »" : ""}
+            {tapes >= question.length ? " »" : ""}
           </p>
         </div>
 
@@ -445,6 +484,21 @@ export function DemoSprint() {
             <span>jour 0</span>
             <span>jour 30</span>
           </div>
+
+          {/* La distinction que ce graphique doit rendre impossible à
+              confondre (17/08/2026, doute de Jérémie). Il compte des
+              PASSAGES DE ROBOTS, qui arrivent bien dès le premier mois — pas
+              des citations, qui demandent 4 à 12 semaines et sont mesurées à
+              J+90. Sous un titre « en trente jours », un visiteur pressé y
+              lisait « résultats en trente jours », ce que notre propre FAQ
+              contredit. */}
+          <p className="mt-3 border-t border-rule pt-2.5 text-[11px] leading-snug text-ink-2">
+            Les robots entrent dès le premier mois.{" "}
+            <strong className="font-semibold text-ink">
+              Les citations suivent en 4 à 12 semaines
+            </strong>{" "}
+            : c'est ce que mesure la remesure à J+90.
+          </p>
         </div>
 
         {/* Les trois chantiers qui se cochent */}
