@@ -151,12 +151,6 @@ const CITES = [
   { nom: "Vous", total: 2, vous: true },
 ];
 
-const ROBOTS = [
-  { nom: "GPTBot", ouvert: false },
-  { nom: "ClaudeBot", ouvert: true },
-  { nom: "PerplexityBot", ouvert: true },
-];
-
 export function DemoScan() {
   const ref = useRef<HTMLDivElement | null>(null);
   const actif = useDemoActive(ref);
@@ -269,29 +263,6 @@ export function DemoScan() {
             </Ligne>
           ))}
         </div>
-
-        {/* Le test des portes : le plus parlant pour un dirigeant */}
-        <Ligne actif={actif} retard={2100} className="mt-4 border-t border-rule pt-3">
-          <p className="mono text-[9.5px] uppercase tracking-[0.12em] text-ink-2">
-            vos portes, robot par robot
-          </p>
-          <div className="mt-2 flex flex-col gap-1">
-            {ROBOTS.map((r, i) => (
-              <Ligne key={r.nom} actif={actif} retard={2300 + i * 180}>
-                <div className="mono flex items-center justify-between text-[10.5px]">
-                  <span className="text-ink-2">{r.nom}</span>
-                  <span
-                    className={
-                      r.ouvert ? "text-ink-2" : "bg-signal px-1.5 py-px font-semibold text-paper"
-                    }
-                  >
-                    {r.ouvert ? "ouvert" : "bloqué"}
-                  </span>
-                </div>
-              </Ligne>
-            ))}
-          </div>
-        </Ligne>
       </Cadre>
     </div>
   );
