@@ -28,9 +28,22 @@ import { MOTEURS, MOTEURS_APERCU } from "@/lib/typo";
 import { MoteurLogo } from "@/components/moteur-logo";
 import { useDemoActive } from "@/lib/use-demo-active";
 
-/** Compte de 0 à `cible` quand `actif` passe à vrai. Repart de 0 sinon. */
+/**
+ * Compte jusqu'à `cible` quand `actif` passe à vrai, et RECOMPTE quand la
+ * cible change.
+ *
+ * Le départ est la valeur affichée à cet instant, pas zéro (17/08/2026,
+ * quand les chiffres se sont mis à changer à chaque question). Un retour à
+ * zéro entre deux questions donnait un clignotement sec, alors que les
+ * barres voisines, elles, glissent d'une largeur à l'autre : de 19 à 23, le
+ * compteur passe donc par 20, 21, 22, comme un relevé qui se met à jour.
+ * Au premier affichage la valeur courante vaut zéro, donc l'entrée est
+ * inchangée.
+ */
 function useCompteur(cible: number, actif: boolean, duree = 900, retard = 0) {
   const [valeur, setValeur] = useState(0);
+  const courante = useRef(0);
+  courante.current = valeur;
 
   useEffect(() => {
     if (!actif) {
@@ -45,12 +58,14 @@ function useCompteur(cible: number, actif: boolean, duree = 900, retard = 0) {
     let brut = 0;
     let debut = 0;
     let fini = false;
+    const depart = courante.current;
     const demarre = window.setTimeout(() => {
       const pas = (t: number) => {
         if (!debut) debut = t;
         const p = Math.min((t - debut) / duree, 1);
         // Sortie cubique : l'aiguille ralentit en arrivant, comme un cadran.
-        setValeur(Math.round(cible * (1 - Math.pow(1 - p, 3))));
+        const avance = 1 - Math.pow(1 - p, 3);
+        setValeur(Math.round(depart + (cible - depart) * avance));
         if (p < 1) brut = requestAnimationFrame(pas);
         else fini = true;
       };
@@ -156,18 +171,20 @@ function Ligne({
  * une pile, et une question nettement plus longue relancerait la mise en page
  * de toute la section à chaque rotation.
  */
-const QUESTIONS = [
-  "meilleur cabinet comptable à Lyon",
-  "meilleur plombier à Bordeaux",
-  "quelle agence web pour mon site",
-  "avocat en droit du travail à Nantes",
-  "meilleur traiteur pour un mariage",
+const QUESTIONS: Array<{ texte: string; cites: [number, number, number] }> = [
+  { texte: "meilleur cabinet comptable à Lyon", cites: [19, 12, 2] },
+  { texte: "meilleur plombier à Bordeaux", cites: [23, 14, 1] },
+  { texte: "quelle agence web pour mon site", cites: [17, 9, 3] },
+  // Zéro citation sur un marché : ce n'est pas une exagération, c'est le
+  // cas le plus courant pour une entreprise qui n'a jamais rien fait.
+  { texte: "avocat en droit du travail à Nantes", cites: [21, 11, 0] },
+  { texte: "meilleur traiteur pour un mariage", cites: [15, 8, 2] },
 ];
 
-const CITES = [
-  { nom: "Concurrent A", total: 19, vous: false },
-  { nom: "Concurrent B", total: 12, vous: false },
-  { nom: "Vous", total: 2, vous: true },
+const RANGS = [
+  { nom: "Concurrent A", vous: false },
+  { nom: "Concurrent B", vous: false },
+  { nom: "Vous", vous: true },
 ];
 
 export function DemoScan() {
@@ -179,7 +196,8 @@ export function DemoScan() {
   // d'un autre métier.
   const [iQuestion, setIQuestion] = useState(0);
   const [tapes, setTapes] = useState(0);
-  const question = QUESTIONS[iQuestion]!;
+  const scene = QUESTIONS[iQuestion]!;
+  const question = scene.texte;
 
   useEffect(() => {
     if (!actif) {
@@ -222,10 +240,22 @@ export function DemoScan() {
     };
   }, [actif, question]);
 
-  const a = useCompteur(19, actif, 1000, 1300);
-  const b = useCompteur(12, actif, 1000, 1450);
-  const v = useCompteur(2, actif, 1000, 1600);
+  /**
+   * Les relevés suivent la question : chaque marché a ses propres chiffres.
+   *
+   * Les retards sont raccourcis (1150ms au lieu de 1300) et la durée aussi
+   * (700ms au lieu de 1000) : le cycle d'une question dure environ 3,1s, et
+   * les compteurs terminaient à 2,6s — ils n'avaient plus le temps de se
+   * poser avant la question suivante. Ils se stabilisent maintenant vers
+   * 2,0s, ce qui laisse une seconde de lecture au repos.
+   */
+  const a = useCompteur(scene.cites[0], actif, 700, 1150);
+  const b = useCompteur(scene.cites[1], actif, 700, 1250);
+  const v = useCompteur(scene.cites[2], actif, 700, 1350);
   const comptes = [a, b, v];
+  /* La barre la plus longue est celle du leader du marché COURANT, pas un
+     19 figé : sans ça, le plombier à 23 débordait de sa piste. */
+  const plafond = Math.max(...scene.cites, 1);
 
   return (
     <div ref={ref} className="h-full w-full">
@@ -277,8 +307,8 @@ export function DemoScan() {
 
         {/* Le décompte des noms cités */}
         <div className="mt-4 flex flex-col gap-2">
-          {CITES.map((c, i) => (
-            <Ligne key={c.nom} actif={actif} retard={1200 + i * 150}>
+          {RANGS.map((c, i) => (
+            <Ligne key={c.nom} actif={actif} retard={1100 + i * 100}>
               <div className="flex items-center gap-2.5">
                 <span
                   className={`mono w-[86px] flex-none text-[11px] ${
@@ -289,12 +319,12 @@ export function DemoScan() {
                 </span>
                 <span className="relative h-[9px] flex-1 bg-[var(--rule)]">
                   <span
-                    className={`absolute inset-y-0 left-0 transition-[width] duration-[1000ms] ease-out ${
+                    className={`absolute inset-y-0 left-0 transition-[width] duration-[700ms] ease-out ${
                       c.vous ? "bg-signal" : "bg-ink"
                     }`}
                     style={{
-                      width: actif ? `${(c.total / 19) * 100}%` : "0%",
-                      transitionDelay: `${1300 + i * 150}ms`,
+                      width: actif ? `${(scene.cites[i]! / plafond) * 100}%` : "0%",
+                      transitionDelay: `${1150 + i * 100}ms`,
                     }}
                   />
                 </span>
