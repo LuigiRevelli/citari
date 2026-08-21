@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
 
 import { useScanFormFocus } from "@/lib/scan-form-focus";
 import { Reveal } from "@/components/jeremie/Reveal";
@@ -59,9 +58,12 @@ type Etape = {
    * renvoyé « réduis la quantité de texte, les gens n'ont pas le temps de
    * lire, mets davantage de visuel ». Les quatre puces de prose faisaient
    * 200 mots par carte à côté d'une illustration décorative. La prose
-   * complète n'est pas perdue : elle vit sur les pages liées en pied de
-   * carte (/methode, /scan-complet, /sprint), qui sont aussi les pages que
-   * les moteurs doivent indexer.
+   * complète n'est pas perdue : elle vit sur /methode, /scan-complet et
+   * /sprint, qui sont aussi les pages que les moteurs doivent indexer.
+   *
+   * Ces trois pages étaient liées par un bouton au pied de chaque carte,
+   * retiré le 17/08/2026 sur demande. Le pied de page reste leur seul
+   * chemin depuis la landing.
    */
   preuves: string[];
   /**
@@ -70,16 +72,6 @@ type Etape = {
    * dise quelque chose qu'aucun visuel ne peut montrer.
    */
   chute?: ReactNode;
-  /**
-   * La notice technique de l'étape, en bouton au pied de la carte
-   * (15/08/2026). La section « Vérifiabilité » qui suivait les trois étapes
-   * redisait ce que les cartes venaient de dire : c'était un doublon, et le
-   * Sprint n'y figurait même pas. Chaque étape porte désormais SON document
-   * — le détail vit sur les pages /methode et /sprint, jamais dans un
-   * dépliant caché sous la carte (le contenu replié n'est pas lu, piège
-   * déjà payé deux fois).
-   */
-  doc: { label: string; to: string; hash?: string };
   /**
    * Le panneau animé qui occupe la colonne de gauche.
    *
@@ -110,7 +102,6 @@ const ETAPES: Etape[] = [
       "Chaque nom cité, compté et classé",
       "Vos portes testées, robot par robot",
     ],
-    doc: { label: "La méthode de mesure, publiée en entier", to: "/methode" },
     Demo: DemoScan,
   },
   {
@@ -140,10 +131,6 @@ const ETAPES: Etape[] = [
         l'affaire s'arrête là.
       </strong>
     ),
-    // Sa propre page depuis le 15/08/2026 : les cartes 01 et 02 renvoyaient
-    // toutes deux vers /methode, ce que Luigi a relevé — deux étapes, deux
-    // documents.
-    doc: { label: "Le scan complet, déplié", to: "/scan-complet" },
     Demo: DemoScanComplet,
   },
   {
@@ -166,7 +153,6 @@ const ETAPES: Etape[] = [
       "Votre nom posé sur les bonnes sources",
       "60 jours de suivi après la livraison",
     ],
-    doc: { label: "Le programme des 90 jours, étape par étape", to: "/sprint" },
     labelCout: "CE QUE ÇA VOUS DEMANDE",
     Demo: DemoSprint,
   },
@@ -322,23 +308,6 @@ export function SectionProcedure() {
                         </dt>
                         <dd className="mt-1.5 leading-snug text-ink">{etape.cout}</dd>
                       </dl>
-
-                      {/* La notice technique de l'étape : un bouton, pas un
-                          lien discret — la leçon du test du père vaut ici
-                          aussi. */}
-                      <Link
-                        to={etape.doc.to}
-                        hash={etape.doc.hash}
-                        className="group/doc mt-5 flex items-center justify-between gap-3 border border-ink px-4 py-3 text-[14px] font-semibold text-ink transition-colors duration-200 hover:bg-ink hover:text-paper"
-                      >
-                        <span>{etape.doc.label}</span>
-                        <span
-                          aria-hidden
-                          className="text-[16px] leading-none transition-transform duration-200 group-hover/doc:translate-x-1"
-                        >
-                          →
-                        </span>
-                      </Link>
                     </div>
                   </div>
                 </div>
